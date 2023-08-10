@@ -27,7 +27,8 @@ The temp directory name will be changed
 return: temp git directory
 '''
 
-def CloneConsumerGit(SoC, branch) :
+def CloneConsumerGit() :
+    SoC, branch = GetSoCBranchName()
     # make tmp dir
     progdir = os.path.dirname(os.path.realpath(__file__))
     tmpdir_wall = os.path.join(progdir, 'tmp_wall_starfish-customization-consumer')
@@ -60,8 +61,8 @@ def CloneConsumerGit(SoC, branch) :
 
 '''
 Get branch names from git repo in the current working directory
-And select the branch name for build
-return: selected branch name
+And select the branch name 
+return: selected branch name, SoC
 '''
 
 def GetSoCBranchName() :
@@ -140,4 +141,16 @@ def GetSoCBranchName() :
     cmdline = 'git checkout ' + branchname
     os.system(cmdline)
 
-    
+    return SoC, branchname
+
+'''
+Get app list to add or delete
+return App list, mode(add or delete)
+'''
+def GetAppList() :
+    # 뭔가 삭제할 앱을 가져와야할 듯? 국가마다 앱리스트가 다름...
+    gitdir = CloneConsumerGit()
+    Countrys = os.listdir(os.path.join(gitdir, 'SoC', 'launchpoints'))
+
+    for country in Countrys :
+
