@@ -9,3 +9,6 @@ to proceed automatically doing job.
  - modify some function
  - being available for Delete function
  - (TBD) Add function 
+
+# 230813
+ -  (TBD) Add function for select applist that users want to add or delete.

@@ -23,6 +23,16 @@ PopularBranchNames = {
                 '@it.52.webos4tv.56',
                ] # for kf23f from itsw
 }
+
+PopularAppNames = {
+    1: 'com.webos.app.discovery',
+    2: 'com.webos.app.sportsteamsettings',
+    3: 'com.webos.app.homeconnect',
+    4: 'com.webos.app.browser',
+    5: 'com.webos.app.mediadiscovery',
+    6: 'amozon.alexa.view'
+}
+
 '''
 Make build-starfish git dir temporarily
 The temp directory name will be changed
@@ -169,8 +179,34 @@ return App list, mode(add or delete)
 def GetAppList(currentdir) :
     countrys = os.listdir(currentdir)
 
-    Apps = input('> Input App names you want to modify : ').replace(' ', '').split(',')
-    print('Apps list = ', Apps)
+    Apps = []
+    while True :
+        # show the app list or input app name by themselves.
+        flag = str(input('> Do you want to show Popular app list (y/N) ?'))
+        if flag == 'y' or flag == 'Y' :
+            print('-- select popular App names --'.center(40))
+            for key in PopularAppNames.keys() :
+                print('{0:10}. {1}'.format(key, PopularAppNames[key]))
+            print('---------------------------------'.center(40))
+
+            try :
+                inputstrs = input('> select several number from applist : ').replace(' ', '').split(',')
+                inputstrs = list(filter(None, inputstrs))
+            except SyntaxError :
+                inputstrs = ''
+            
+            for inputstr in inputstrs :
+                if inputstr.isdigit() :
+                    inputnum = int(inputstr)
+                    if inputnum in PopularAppNames.keys() :
+                        Apps.append(PopularAppNames[inputnum])
+                else :
+                    print('> Warning: select valid number : {}, please make sure app-name.'.format(inputstr))
+            break
+        else :
+            Apps = input('> Input App names you want to modify : ').replace(' ', '').split(',')
+            print('Apps list = ', Apps)
+            break
     
     if Apps != [] :
         for country in countrys :
@@ -193,7 +229,7 @@ def GetAppList(currentdir) :
                 file.write(json_bytes)
     
     elif Apps == [] :
-        print('> There is no app to modify')
+        print('> Warning : There are no some apps to delete')
 
             
 def DoCommit(branchname) :
