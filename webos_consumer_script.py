@@ -179,8 +179,10 @@ return App list, mode(add or delete)
 def GetAppList(currentdir) :
     countrys = os.listdir(currentdir)
 
-    Apps = []
+
     while True :
+        Apps = []
+        invalidApps = []
         # show the app list or input app name by themselves.
         flag = str(input('> Do you want to show Popular app list (y/N) ?'))
         if flag == 'y' or flag == 'Y' :
@@ -194,42 +196,50 @@ def GetAppList(currentdir) :
                 inputstrs = list(filter(None, inputstrs))
             except SyntaxError :
                 inputstrs = ''
-            
+
             for inputstr in inputstrs :
-                if inputstr.isdigit() :
-                    inputnum = int(inputstr)
-                    if inputnum in PopularAppNames.keys() :
-                        Apps.append(PopularAppNames[inputnum])
+                if inputstr.isdigit() and inputstr in PopularAppNames.keys() :
+                    Apps.append(PopularAppNames[int(inputstr)])
                 else :
-                    print('> Warning: select valid number : {}, please make sure app-name.'.format(inputstr))
-            break
+                    invalidApps.append(PopularAppNames[int(inputstr)])
+            
+            if Apps :
+                print('> Show App list that it would be modified : {}'.format(', '.join(Apps)))
+                break
+            
+            else :
+                print('> Warning: Please make sure that if Apps is valid or not')
+                continue
         else :
             Apps = input('> Input App names you want to modify : ').replace(' ', '').split(',')
             print('Apps list = ', Apps)
             break
     
-    if Apps != [] :
-        for country in countrys :
-            AppDir = os.path.join(currentdir, country, 'applist.json')
-            with open(AppDir, 'rb') as file :
-                content = file.read()
+    while True :
+        if Apps != [] :
+            for country in countrys :
+                AppDir = os.path.join(currentdir, country, 'applist.json')
+                with open(AppDir, 'rb') as file :
+                    content = file.read()
+                    
+                content_decoded = content.decode('utf-8')
+                data = json.loads(content_decoded)
                 
-            content_decoded = content.decode('utf-8')
-            data = json.loads(content_decoded)
-            
-            for key, value in data.items() :
-                for App in Apps :
-                    if App in value :
-                        data[key].remove(App)
-            
-            json_str = json.dumps(data, indent=4).replace('\n', '\r\n')
-            json_bytes = json_str.encode('utf-8')
-            
-            with open(AppDir, 'wb') as file :
-                file.write(json_bytes)
-    
-    elif Apps == [] :
-        print('> Warning : There are no some apps to delete')
+                for key, value in data.items() :
+                    for App in Apps :
+                        if App in value :
+                            data[key].remove(App)
+                
+                json_str = json.dumps(data, indent=4).replace('\n', '\r\n')
+                json_bytes = json_str.encode('utf-8')
+                
+                with open(AppDir, 'wb') as file :
+                    file.write(json_bytes)
+                break
+        
+        elif Apps == [] :
+            print('> Warning : There are no some apps to delete')
+            continue
 
             
 def DoCommit(branchname) :
