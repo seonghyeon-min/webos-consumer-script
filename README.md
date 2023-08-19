@@ -11,4 +11,5 @@ to proceed automatically doing job.
  - (TBD) Add function 
 
 # 230813
- -  (TBD) Add function for select applist that users want to add or delete.
+ -  Add function for select applist that users want to add
+ -  (TBD) how can i accomplish the codes that the app mode can be "ADD"
